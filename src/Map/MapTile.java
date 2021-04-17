@@ -1,4 +1,5 @@
 package Map;
+
 public interface MapTile {
 
     String getURL();
