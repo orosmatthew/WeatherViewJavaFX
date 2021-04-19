@@ -1,56 +1,91 @@
 package UI;
 
-import Map.Map;
 import Map.BoundingBox;
+import Map.Map;
 import Map.MapHelper;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.util.ArrayList;
 
 public class MapView extends Pane {
 
-    private int mapSize;
+    private final int mapSize;
+    private final ImageView imageView;
+    private final ArrayList<Overlay> overlays = new ArrayList<>();
+    private final ArrayList<ImageView> overlayImageViews = new ArrayList<>();
+    private final int zoom;
     private Map map;
     private Image mapImage;
-    private ImageView imageView;
     private BoundingBox boundingBox;
+    private double latitude;
+    private double longitude;
 
-    public MapView(int mapSize) {
+    public MapView(int mapSize, int zoom) {
         this.mapSize = mapSize;
+        this.zoom = zoom;
+        latitude = 41.347881d;
+        longitude = -81.808503d;
+        imageView = new ImageView();
+        getChildren().add(imageView);
+        updateMap();
+    }
 
-        map = new Map();
+    public ArrayList<Overlay> getOverlays() {
+        return overlays;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void updateMap() {
+        map = new Map(latitude, longitude, zoom);
         BufferedImage mapBufferedImage = map.getImage(this.mapSize);
         mapImage = SwingFXUtils.toFXImage(mapBufferedImage, null);
         boundingBox = MapHelper.tile2boundingBox(map.getTileX(), map.getTileY(), map.getZoom());
 
-        imageView = new ImageView(mapImage);
-        getChildren().add(imageView);
-    }
+        imageView.setImage(mapImage);
 
-    public void addOverlay(String overlay, double lat, double lon) {
+        for (ImageView imageView : overlayImageViews) {
+            getChildren().remove(imageView);
+        }
 
-        int[] pos = latlon2map(lat, lon);
+        overlayImageViews.clear();
 
-        File file = new File("overlays/" + overlay + ".png");
-        Image cloudImage = new Image(file.toURI().toString());
-        ImageView cloudImageView = new ImageView(cloudImage);
+        for (Overlay overlay : overlays) {
+            int[] pos = latlon2map(overlay.getLatitude(), overlay.getLongitude());
 
-        getChildren().add(cloudImageView);
+            ImageView overlayImageView = new ImageView(overlay.getOverlayImage());
 
-        cloudImageView.setScaleX(1);
-        cloudImageView.setScaleY(1);
+            getChildren().add(overlayImageView);
+            overlayImageViews.add(overlayImageView);
 
-        cloudImageView.setX(mapSize * -0.01);
-        cloudImageView.setY(mapSize * -0.01);
+            overlayImageView.setScaleX(1);
+            overlayImageView.setScaleY(1);
 
-        cloudImageView.setTranslateX(pos[0]);
-        cloudImageView.setTranslateY(pos[1]);
+            overlayImageView.setX(mapSize * -0.01);
+            overlayImageView.setY(mapSize * -0.01);
+
+            overlayImageView.setTranslateX(pos[0]);
+            overlayImageView.setTranslateY(pos[1]);
+        }
+
     }
 
     public int[] latlon2map(double lat, double lon) {
@@ -61,16 +96,14 @@ public class MapView extends Pane {
         double shortLat = lat - boundingBox.south;
         double shortLon = lon - boundingBox.west;
 
-        int[] pos = new int[] {0, 0};
+        int[] pos = new int[]{0, 0};
 
-        pos[0] = (int)((mapSize * shortLon) / rangeX);
-        pos[1] = mapSize - (int)((mapSize * shortLat) / rangeY);
-
+        pos[0] = (int) ((mapSize * shortLon) / rangeX);
+        pos[1] = mapSize - (int) ((mapSize * shortLat) / rangeY);
 
         return pos;
 
     }
-
 
 
 }
