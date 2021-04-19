@@ -1,5 +1,6 @@
 package UI;
 
+import Map.Coordinate;
 import javafx.scene.image.Image;
 
 import java.io.File;
@@ -7,25 +8,19 @@ import java.io.File;
 public class Overlay {
 
     private final Image overlayImage;
-    private final double latitude;
-    private final double longitude;
+    private final Coordinate coordinate;
 
-    public Overlay(String overlay, double latitude, double longitude) {
+    public Overlay(String overlay, Coordinate coordinate) {
         File file = new File("overlays/" + overlay + ".png");
         this.overlayImage = new Image(file.toURI().toString());
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.coordinate = coordinate;
     }
 
     public Image getOverlayImage() {
         return overlayImage;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 }

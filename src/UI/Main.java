@@ -1,5 +1,6 @@
 package UI;
 
+import Map.Coordinate;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,7 +24,7 @@ public class Main extends Application {
 
         GridPane gridPane = new GridPane();
 
-        MapView mapView = new MapView(450, 7);
+        MapView mapView = new MapView(480, 7);
 
         //double lat2 = 41.656497;
         //double lon2 = -83.478575;
@@ -37,8 +38,8 @@ public class Main extends Application {
         Label latitudeLabel = new Label("Latitude: ");
         Label longitudeLabel = new Label("Longitude: ");
 
-        TextField latitudeField = new TextField(String.valueOf(mapView.getLatitude()));
-        TextField longitudeField = new TextField(String.valueOf(mapView.getLongitude()));
+        TextField latitudeField = new TextField(String.valueOf(mapView.getCoordinate().getLat()));
+        TextField longitudeField = new TextField(String.valueOf(mapView.getCoordinate().getLon()));
 
         gridPane.add(latitudeLabel, 0, 1);
         gridPane.add(longitudeLabel, 0, 2);
@@ -51,10 +52,10 @@ public class Main extends Application {
         mapButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                mapView.setLatitude(Double.parseDouble(latitudeField.getText()));
-                mapView.setLongitude(Double.parseDouble(longitudeField.getText()));
+                Coordinate inputCoordinate = new Coordinate(Double.parseDouble(latitudeField.getText()), Double.parseDouble(longitudeField.getText()));
+                mapView.setCoordinate(inputCoordinate);
                 mapView.getOverlays().clear();
-                Overlay crossOverlay = new Overlay("cross", Double.parseDouble(latitudeField.getText()), Double.parseDouble(longitudeField.getText()));
+                Overlay crossOverlay = new Overlay("cross", inputCoordinate);
                 mapView.getOverlays().add(crossOverlay);
                 mapView.updateMap();
             }

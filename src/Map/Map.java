@@ -9,20 +9,15 @@ public class Map {
     private final TileServer tileServer;
     private final String MapboxAccessToken = "pk.eyJ1Ijoib3Jvc21hdHRoZXciLCJhIjoiY2ttczM4MGxxMGR0YjJ2bnhqa2ZpcnF3diJ9.WBoUUsXLofAZC9xM52N-oQ";
     private BufferedImage image;
-    private final int tileX;
-    private final int tileY;
-    private final int zoom;
+    private int tileX;
+    private int tileY;
+    private int zoom;
+    private Coordinate coordinate;
 
-    public Map(double lat, double lon, int zoom) {
-
-        tileServer = new CachedTileServer();
-
+    public Map(Coordinate coordinate, int zoom) {
+        this.coordinate = coordinate;
         this.zoom = zoom;
-
-        Tile tile = MapHelper.getTileNumbers(lat, lon, zoom);
-
-        tileX = tile.tileX;
-        tileY = tile.tileY;
+        tileServer = new CachedTileServer();
 
         updateTile();
     }
@@ -47,7 +42,22 @@ public class Map {
         return zoom;
     }
 
-    private void updateTile() {
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate = coordinate;
+    }
+
+    public void updateTile() {
+        Tile tileNumbers = MapHelper.getTileNumbers(coordinate, zoom);
+        tileX = tileNumbers.tileX;
+        tileY = tileNumbers.tileY;
         MapTile tile = new MapboxTile(tileX, tileY, zoom, MapboxAccessToken, true);
         image = tileServer.getTile(tile);
     }

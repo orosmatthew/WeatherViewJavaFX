@@ -1,6 +1,7 @@
 package UI;
 
 import Map.BoundingBox;
+import Map.Coordinate;
 import Map.Map;
 import Map.MapHelper;
 import javafx.embed.swing.SwingFXUtils;
@@ -18,19 +19,18 @@ public class MapView extends Pane {
     private final ArrayList<Overlay> overlays = new ArrayList<>();
     private final ArrayList<ImageView> overlayImageViews = new ArrayList<>();
     private final int zoom;
-    private Map map;
+    private final Map map;
     private Image mapImage;
     private BoundingBox boundingBox;
-    private double latitude;
-    private double longitude;
+    private Coordinate coordinate;
 
     public MapView(int mapSize, int zoom) {
         this.mapSize = mapSize;
         this.zoom = zoom;
-        latitude = 41.347881d;
-        longitude = -81.808503d;
+        coordinate = new Coordinate(41.347881d, -81.808503d);
         imageView = new ImageView();
         getChildren().add(imageView);
+        map = new Map(coordinate, this.zoom);
         updateMap();
     }
 
@@ -38,24 +38,18 @@ public class MapView extends Pane {
         return overlays;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate = coordinate;
     }
 
     public void updateMap() {
-        map = new Map(latitude, longitude, zoom);
+        map.setCoordinate(coordinate);
+        map.setZoom(zoom);
+        map.updateTile();
         BufferedImage mapBufferedImage = map.getImage(this.mapSize);
         mapImage = SwingFXUtils.toFXImage(mapBufferedImage, null);
         boundingBox = MapHelper.tile2boundingBox(map.getTileX(), map.getTileY(), map.getZoom());
@@ -69,7 +63,7 @@ public class MapView extends Pane {
         overlayImageViews.clear();
 
         for (Overlay overlay : overlays) {
-            int[] pos = latlon2map(overlay.getLatitude(), overlay.getLongitude());
+            int[] pos = coord2map(overlay.getCoordinate());
 
             ImageView overlayImageView = new ImageView(overlay.getOverlayImage());
 
@@ -88,13 +82,13 @@ public class MapView extends Pane {
 
     }
 
-    public int[] latlon2map(double lat, double lon) {
+    public int[] coord2map(Coordinate coordinate) {
 
         double rangeX = Math.abs(boundingBox.east - boundingBox.west);
         double rangeY = Math.abs(boundingBox.north - boundingBox.south);
 
-        double shortLat = lat - boundingBox.south;
-        double shortLon = lon - boundingBox.west;
+        double shortLat = coordinate.getLat() - boundingBox.south;
+        double shortLon = coordinate.getLon() - boundingBox.west;
 
         int[] pos = new int[]{0, 0};
 
