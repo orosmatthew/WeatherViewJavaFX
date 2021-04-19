@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class MapView extends Pane {
-
+    
     private Map map;
     private Image mapImage;
     private ImageView imageView;
