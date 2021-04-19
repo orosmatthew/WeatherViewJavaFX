@@ -26,14 +26,15 @@ public class Main extends Application {
         GridPane gridPane = new GridPane();
 
         MapView mapView = new MapView();
+
         double lat1 = 41.347881d;
         double lon1 = -81.808503d;
 
         double lat2 = 41.656497;
         double lon2 = -83.478575;
 
-        mapView.addCloud(lat1, lon1);
-        mapView.addCloud(lat2, lon2);
+        mapView.addOverlay("cross", lat1, lon1);
+        mapView.addOverlay("cloud", lat2, lon2);
 
         gridPane.add(mapView, 1, 1);
 

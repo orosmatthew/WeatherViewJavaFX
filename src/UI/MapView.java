@@ -31,18 +31,18 @@ public class MapView extends Pane {
         getChildren().add(imageView);
     }
 
-    public void addCloud(double lat, double lon) {
+    public void addOverlay(String overlay, double lat, double lon) {
 
         int[] pos = latlon2map(lat, lon);
 
-        File file = new File("arrow.png");
+        File file = new File("overlays/" + overlay + ".png");
         Image cloudImage = new Image(file.toURI().toString());
         ImageView cloudImageView = new ImageView(cloudImage);
 
         getChildren().add(cloudImageView);
 
-        cloudImageView.setScaleX(2);
-        cloudImageView.setScaleY(2);
+        cloudImageView.setScaleX(1);
+        cloudImageView.setScaleY(1);
 
         cloudImageView.setX(-5);
         cloudImageView.setY(-5);
@@ -56,18 +56,14 @@ public class MapView extends Pane {
         double rangeX = Math.abs(boundingBox.east - boundingBox.west);
         double rangeY = Math.abs(boundingBox.north - boundingBox.south);
 
-
         double shortLat = lat - boundingBox.south;
         double shortLon = lon - boundingBox.west;
-
 
         int[] pos = new int[] {0, 0};
 
         pos[0] = (int)((500 * shortLon) / rangeX);
         pos[1] = 500 - (int)((500 * shortLat) / rangeY);
 
-        System.out.println(pos[0]);
-        System.out.println(pos[1]);
 
         return pos;
 
