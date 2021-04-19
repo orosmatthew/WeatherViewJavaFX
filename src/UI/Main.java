@@ -2,11 +2,14 @@ package UI;
 
 import Map.Coordinate;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -47,6 +50,18 @@ public class Main extends Application {
         gridPane.add(latitudeField, 1, 1);
         gridPane.add(longitudeField, 1, 2);
 
+
+        Label zoomLabel = new Label("Zoom Level: ");
+        ObservableList<Integer> options = FXCollections.observableArrayList();
+        for (int i = 0; i < 15; i++) {
+            options.add(i);
+        }
+        final ComboBox zoomMenu = new ComboBox(options);
+        zoomMenu.setValue(7);
+
+        gridPane.add(zoomLabel, 0, 3);
+        gridPane.add(zoomMenu, 1, 3);
+
         Button mapButton = new Button("Map!");
 
         mapButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -54,6 +69,7 @@ public class Main extends Application {
             public void handle(ActionEvent actionEvent) {
                 Coordinate inputCoordinate = new Coordinate(Double.parseDouble(latitudeField.getText()), Double.parseDouble(longitudeField.getText()));
                 mapView.setCoordinate(inputCoordinate);
+                mapView.setZoom((Integer) zoomMenu.getValue());
                 mapView.getOverlays().clear();
                 Overlay crossOverlay = new Overlay("cross", inputCoordinate);
                 mapView.getOverlays().add(crossOverlay);
@@ -61,7 +77,7 @@ public class Main extends Application {
             }
         });
 
-        gridPane.add(mapButton, 1, 3);
+        gridPane.add(mapButton, 1, 4);
 
         gridPane.setHgap(10);
         gridPane.setVgap(10);

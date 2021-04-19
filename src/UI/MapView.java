@@ -18,8 +18,8 @@ public class MapView extends Pane {
     private final ImageView imageView;
     private final ArrayList<Overlay> overlays = new ArrayList<>();
     private final ArrayList<ImageView> overlayImageViews = new ArrayList<>();
-    private final int zoom;
     private final Map map;
+    private int zoom;
     private Image mapImage;
     private BoundingBox boundingBox;
     private Coordinate coordinate;
@@ -32,6 +32,14 @@ public class MapView extends Pane {
         getChildren().add(imageView);
         map = new Map(coordinate, this.zoom);
         updateMap();
+    }
+
+    public int getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
     }
 
     public ArrayList<Overlay> getOverlays() {
