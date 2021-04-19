@@ -14,16 +14,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class MapView extends Pane {
-    
+
+    private int mapSize;
     private Map map;
     private Image mapImage;
     private ImageView imageView;
     private BoundingBox boundingBox;
 
-    public MapView() {
+    public MapView(int mapSize) {
+        this.mapSize = mapSize;
 
         map = new Map();
-        BufferedImage mapBufferedImage = map.getImage();
+        BufferedImage mapBufferedImage = map.getImage(this.mapSize);
         mapImage = SwingFXUtils.toFXImage(mapBufferedImage, null);
         boundingBox = MapHelper.tile2boundingBox(map.getTileX(), map.getTileY(), map.getZoom());
 
@@ -44,8 +46,8 @@ public class MapView extends Pane {
         cloudImageView.setScaleX(1);
         cloudImageView.setScaleY(1);
 
-        cloudImageView.setX(-5);
-        cloudImageView.setY(-5);
+        cloudImageView.setX(mapSize * -0.01);
+        cloudImageView.setY(mapSize * -0.01);
 
         cloudImageView.setTranslateX(pos[0]);
         cloudImageView.setTranslateY(pos[1]);
@@ -61,8 +63,8 @@ public class MapView extends Pane {
 
         int[] pos = new int[] {0, 0};
 
-        pos[0] = (int)((500 * shortLon) / rangeX);
-        pos[1] = 500 - (int)((500 * shortLat) / rangeY);
+        pos[0] = (int)((mapSize * shortLon) / rangeX);
+        pos[1] = mapSize - (int)((mapSize * shortLat) / rangeY);
 
 
         return pos;

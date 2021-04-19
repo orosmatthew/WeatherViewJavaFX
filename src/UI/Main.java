@@ -27,7 +27,7 @@ public class Main extends Application {
 
         GridPane gridPane = new GridPane();
 
-        MapView mapView = new MapView();
+        MapView mapView = new MapView(450);
 
         double lat1 = 41.347881d;
         double lon1 = -81.808503d;
@@ -53,7 +53,7 @@ public class Main extends Application {
         gridPane.add(latitudeField, 1, 1);
         gridPane.add(longitudeField, 1, 2);
 
-        Scene scene = new Scene(gridPane, 600, 650);
+        Scene scene = new Scene(gridPane, 550, 650);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
