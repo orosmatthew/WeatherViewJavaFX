@@ -23,6 +23,7 @@ public class MapView extends Pane {
     private Image mapImage;
     private BoundingBox boundingBox;
     private Coordinate coordinate;
+    private Overlay hoverOverlay;
 
     public MapView(int mapSize, int zoom) {
         this.mapSize = mapSize;
@@ -74,6 +75,10 @@ public class MapView extends Pane {
             int[] pos = coord2map(overlay.getCoordinate());
 
             ImageView overlayImageView = new ImageView(overlay.getOverlayImage());
+
+            overlayImageView.setOnMouseClicked(mouseEvent -> {
+                overlay.click();
+            });
 
             getChildren().add(overlayImageView);
             overlayImageViews.add(overlayImageView);

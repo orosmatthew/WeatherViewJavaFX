@@ -23,4 +23,8 @@ public class Overlay {
     public Coordinate getCoordinate() {
         return coordinate;
     }
+
+    public void click() {
+
+    }
 }
