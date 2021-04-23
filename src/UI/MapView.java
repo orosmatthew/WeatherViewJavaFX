@@ -16,14 +16,14 @@ public class MapView extends Pane {
 
     private final int mapSize;
     private final ImageView imageView;
-    private final ArrayList<Overlay> overlays = new ArrayList<>();
+    private final ArrayList<MapOverlay> mapOverlays = new ArrayList<>();
     private final ArrayList<ImageView> overlayImageViews = new ArrayList<>();
     private final Map map;
     private int zoom;
     private Image mapImage;
     private BoundingBox boundingBox;
     private Coordinate coordinate;
-    private Overlay hoverOverlay;
+    private MapOverlay hoverMapOverlay;
 
     public MapView(int mapSize, int zoom) {
         this.mapSize = mapSize;
@@ -43,8 +43,8 @@ public class MapView extends Pane {
         this.zoom = zoom;
     }
 
-    public ArrayList<Overlay> getOverlays() {
-        return overlays;
+    public ArrayList<MapOverlay> getOverlays() {
+        return mapOverlays;
     }
 
     public Coordinate getCoordinate() {
@@ -71,13 +71,13 @@ public class MapView extends Pane {
 
         overlayImageViews.clear();
 
-        for (Overlay overlay : overlays) {
-            int[] pos = coord2map(overlay.getCoordinate());
+        for (MapOverlay mapOverlay : mapOverlays) {
+            int[] pos = coord2map(mapOverlay.getCoordinate());
 
-            ImageView overlayImageView = new ImageView(overlay.getOverlayImage());
+            ImageView overlayImageView = new ImageView(mapOverlay.getOverlayImage());
 
             overlayImageView.setOnMouseClicked(mouseEvent -> {
-                overlay.click();
+                mapOverlay.click();
             });
 
             getChildren().add(overlayImageView);
@@ -109,6 +109,19 @@ public class MapView extends Pane {
         pos[1] = mapSize - (int) ((mapSize * shortLat) / rangeY);
 
         return pos;
+    }
+
+    public Coordinate map2coord(int[] pos) {
+
+        double rangeX = Math.abs(boundingBox.east - boundingBox.west);
+        double rangeY = Math.abs(boundingBox.north - boundingBox.south);
+
+        double shortLon = (pos[0] * rangeX) / mapSize;
+        double shortLat = ((mapSize - pos[1]) * rangeY) / mapSize;
+
+        Coordinate coordinate = new Coordinate(boundingBox.south + shortLat, boundingBox.west + shortLon);
+
+        return coordinate;
 
     }
 

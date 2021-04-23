@@ -5,7 +5,7 @@ import Weather.Period;
 import Weather.WeatherResponse;
 import Weather.WeatherServer;
 
-public class WeatherOverlay extends Overlay {
+public class WeatherOverlay extends MapOverlay {
 
     private final WeatherResponse weatherResponse;
     private final WeatherServer weatherServer;
@@ -16,6 +16,7 @@ public class WeatherOverlay extends Overlay {
         this.weatherServer = weatherServer;
         weatherResponse = this.weatherServer.getWeather(getCoordinate());
         this.weatherPane = weatherPane;
+        setWeather();
     }
 
     public WeatherResponse getWeatherResponse() {
@@ -24,7 +25,11 @@ public class WeatherOverlay extends Overlay {
 
     @Override
     public void click() {
-        if (weatherResponse != null && weatherResponse.getProperties().getPeriods() != null) {
+        setWeather();
+    }
+
+    public void setWeather() {
+        if (weatherResponse != null) {
             String weatherText = "";
             for (Period period : getWeatherResponse().getProperties().getPeriods()) {
                 weatherText += period.getName() + ": " + period.getShortForecast() + "\n";

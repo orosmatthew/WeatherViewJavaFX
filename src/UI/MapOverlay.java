@@ -5,12 +5,12 @@ import javafx.scene.image.Image;
 
 import java.io.File;
 
-public class Overlay {
+public class MapOverlay {
 
     private final Image overlayImage;
     private final Coordinate coordinate;
 
-    public Overlay(String overlay, Coordinate coordinate) {
+    public MapOverlay(String overlay, Coordinate coordinate) {
         File file = new File("overlays/" + overlay + ".png");
         this.overlayImage = new Image(file.toURI().toString());
         this.coordinate = coordinate;

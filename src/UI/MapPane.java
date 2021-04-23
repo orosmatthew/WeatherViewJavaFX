@@ -4,19 +4,36 @@ import Map.Coordinate;
 import Weather.WeatherServer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 public class MapPane extends GridPane {
 
     private WeatherPane weatherPane;
+    private TextField latitudeField;
+    private TextField longitudeField;
+    private Coordinate mapCoordinate;
+    private MapView mapView;
+    private ComboBox zoomMenu;
+    private WeatherServer weatherServer;
 
     public MapPane() {
-        MapView mapView = new MapView(480, 7);
+        mapView = new MapView(480, 7);
+
+        mapView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Coordinate coordinate = mapView.map2coord(new int[] {(int)mouseEvent.getX(), (int)mouseEvent.getY()});
+                setMapCoordinate(coordinate);
+            }
+        });
 
         add(mapView, 0, 0, 2, 1);
         setAlignment(Pos.CENTER);
@@ -24,8 +41,8 @@ public class MapPane extends GridPane {
         Label latitudeLabel = new Label("Latitude: ");
         Label longitudeLabel = new Label("Longitude: ");
 
-        TextField latitudeField = new TextField(String.valueOf(mapView.getCoordinate().getLat()));
-        TextField longitudeField = new TextField(String.valueOf(mapView.getCoordinate().getLon()));
+        latitudeField = new TextField(String.valueOf(mapView.getCoordinate().getLat()));
+        longitudeField = new TextField(String.valueOf(mapView.getCoordinate().getLon()));
 
         add(latitudeLabel, 0, 1);
         add(longitudeLabel, 0, 2);
@@ -39,7 +56,7 @@ public class MapPane extends GridPane {
         for (int i = 0; i < 15; i++) {
             options.add(i);
         }
-        final ComboBox zoomMenu = new ComboBox(options);
+        zoomMenu = new ComboBox(options);
         zoomMenu.setValue(7);
 
         add(zoomLabel, 0, 3);
@@ -47,16 +64,11 @@ public class MapPane extends GridPane {
 
         Button mapButton = new Button("Map!");
 
-        WeatherServer weatherServer = new WeatherServer();
+        weatherServer = new WeatherServer();
 
         mapButton.setOnAction(actionEvent -> {
             Coordinate inputCoordinate = new Coordinate(Double.parseDouble(latitudeField.getText()), Double.parseDouble(longitudeField.getText()));
-            mapView.setCoordinate(inputCoordinate);
-            mapView.setZoom((Integer) zoomMenu.getValue());
-            mapView.getOverlays().clear();
-            WeatherOverlay crossOverlay = new WeatherOverlay("cross", inputCoordinate, weatherServer, weatherPane);
-            mapView.getOverlays().add(crossOverlay);
-            mapView.updateMap();
+            setMapCoordinate(inputCoordinate);
         });
 
         add(mapButton, 1, 4);
@@ -70,6 +82,17 @@ public class MapPane extends GridPane {
 
     public void setWeatherPane(WeatherPane weatherPane) {
         this.weatherPane = weatherPane;
+    }
+
+    public void setMapCoordinate(Coordinate coordinate) {
+        latitudeField.setText(String.valueOf(coordinate.getLat()));
+        longitudeField.setText(String.valueOf(coordinate.getLon()));
+        mapView.setCoordinate(coordinate);
+        mapView.setZoom((Integer) zoomMenu.getValue());
+        mapView.getOverlays().clear();
+        WeatherOverlay crossOverlay = new WeatherOverlay("cross", coordinate, weatherServer, weatherPane);
+        mapView.getOverlays().add(crossOverlay);
+        mapView.updateMap();
     }
 
 }

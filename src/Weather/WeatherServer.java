@@ -14,6 +14,12 @@ public class WeatherServer {
 
     HttpClient client;
 
+    private String[] errorMessages = new String[] {
+            "Marine Forecast Not Supported",
+            "Data Unavailable For Requested Point",
+            "Unexpected Problem"
+    };
+
     public WeatherServer() {
         client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
@@ -32,12 +38,24 @@ public class WeatherServer {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             Gson gson = new Gson();
-            if (response.body().contains("\"title\": \"Data Unavailable For Requested Point\"") || response.body().contains("\"title\": \"Unexpected Problem\"")) {
-                return null;
+            for (String message: errorMessages) {
+                if (response.body().contains(message)) {
+                    return null;
+                }
             }
             WeatherPointResponse weatherPointResponse = gson.fromJson(response.body(), WeatherPointResponse.class);
-            WeatherResponse weatherResponse = getForecast(weatherPointResponse.properties.forecast);
-            return weatherResponse;
+            if (weatherPointResponse != null || weatherPointResponse.properties.forecast != null) {
+                WeatherResponse weatherResponse = getForecast(weatherPointResponse.properties.forecast);
+                if (weatherResponse != null) {
+                    if (weatherResponse.properties != null) {
+                        if (weatherResponse.properties.periods != null) {
+                            return weatherResponse;
+                        }
+                    }
+                }
+                return null;
+            }
+            return null;
         } catch (IOException exception) {
             System.out.println("Unable to communicate with web server");
             return null;
