@@ -1,9 +1,9 @@
 package Weather;
 
 public class Period {
-    String name;
-    int temperature;
-    String shortForecast;
+    private String name;
+    private int temperature;
+    private String shortForecast;
 
     public String getName() {
         return name;

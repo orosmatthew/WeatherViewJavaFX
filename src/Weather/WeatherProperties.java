@@ -1,7 +1,7 @@
 package Weather;
 
 public class WeatherProperties {
-    Period[] periods;
+    private Period[] periods;
 
     public Period[] getPeriods() {
         return periods;

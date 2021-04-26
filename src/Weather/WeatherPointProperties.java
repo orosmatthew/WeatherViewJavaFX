@@ -1,7 +1,7 @@
 package Weather;
 
 public class WeatherPointProperties {
-    String forecast;
+    private String forecast;
 
     public String getForecast() {
         return forecast;

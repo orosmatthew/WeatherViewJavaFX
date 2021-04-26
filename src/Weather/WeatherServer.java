@@ -14,7 +14,7 @@ public class WeatherServer {
 
     HttpClient client;
 
-    private String[] errorMessages = new String[] {
+    private final String[] errorMessages = new String[]{
             "Marine Forecast Not Supported",
             "Data Unavailable For Requested Point",
             "Unexpected Problem"
@@ -38,17 +38,17 @@ public class WeatherServer {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             Gson gson = new Gson();
-            for (String message: errorMessages) {
+            for (String message : errorMessages) {
                 if (response.body().contains(message)) {
                     return null;
                 }
             }
             WeatherPointResponse weatherPointResponse = gson.fromJson(response.body(), WeatherPointResponse.class);
-            if (weatherPointResponse != null || weatherPointResponse.properties.forecast != null) {
-                WeatherResponse weatherResponse = getForecast(weatherPointResponse.properties.forecast);
+            if (weatherPointResponse != null || weatherPointResponse.getProperties().getForecast() != null) {
+                WeatherResponse weatherResponse = getForecast(weatherPointResponse.getProperties().getForecast());
                 if (weatherResponse != null) {
-                    if (weatherResponse.properties != null) {
-                        if (weatherResponse.properties.periods != null) {
+                    if (weatherResponse.getProperties() != null) {
+                        if (weatherResponse.getProperties().getPeriods() != null) {
                             return weatherResponse;
                         }
                     }

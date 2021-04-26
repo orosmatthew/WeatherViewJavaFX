@@ -1,7 +1,7 @@
 package Weather;
 
 public class WeatherPointResponse {
-    WeatherPointProperties properties;
+    private WeatherPointProperties properties;
 
     public WeatherPointProperties getProperties() {
         return properties;
