@@ -12,13 +12,12 @@ import java.text.DecimalFormat;
 
 public class WeatherServer {
 
-    HttpClient client;
-
     private final String[] errorMessages = new String[]{
             "Marine Forecast Not Supported",
             "Data Unavailable For Requested Point",
             "Unexpected Problem"
     };
+    HttpClient client;
 
     public WeatherServer() {
         client = HttpClient.newBuilder()

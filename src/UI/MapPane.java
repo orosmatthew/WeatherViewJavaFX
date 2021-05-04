@@ -14,12 +14,12 @@ import javafx.scene.layout.HBox;
 
 public class MapPane extends GridPane {
 
-    private WeatherPane weatherPane;
     private final TextField latitudeField;
     private final TextField longitudeField;
     private final MapView mapView;
     private final ComboBox zoomMenu;
     private final WeatherServer weatherServer;
+    private WeatherPane weatherPane;
 
     public MapPane() {
         mapView = new MapView(450, 7);
